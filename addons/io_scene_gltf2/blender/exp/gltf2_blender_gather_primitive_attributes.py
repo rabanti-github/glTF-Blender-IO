@@ -18,6 +18,8 @@ from io_scene_gltf2.io.com import gltf2_io_constants
 from io_scene_gltf2.io.com import gltf2_io_debug
 from io_scene_gltf2.io.exp import gltf2_io_binary_data
 from io_scene_gltf2.blender.exp import gltf2_blender_utils
+from io_scene_gltf2.io.com.gltf2_io_debug import print_console, print_newline
+import math
 
 
 def gather_primitive_attributes(blender_primitive, export_settings):
@@ -134,10 +136,20 @@ def __gather_texcoord(blender_primitive, export_settings):
 def __gather_colors(blender_primitive, export_settings):
     attributes = {}
     if export_settings[gltf2_blender_export_keys.COLORS]:
+        color_space = 0
+        if export_settings[gltf2_blender_export_keys.COLORS_FORMAT] == 'LINEAR':
+            color_space = 1
         color_index = 0
         color_id = 'COLOR_' + str(color_index)
         while blender_primitive["attributes"].get(color_id) is not None:
-            internal_color = blender_primitive["attributes"][color_id]
+           # print_console('INFO', blender_primitive["attributes"][color_id])
+
+           # print_console('INFO', str(internal_color))
+            if color_space == 0: 
+                internal_color = blender_primitive["attributes"][color_id] # SRGB = default
+            else: # Linear modifier
+                internal_color = __convert_to_linear_color(blender_primitive["attributes"][color_id])
+            
             attributes[color_id] = gltf2_io.Accessor(
                 buffer_view=gltf2_io_binary_data.BinaryData.from_list(
                     internal_color, gltf2_io_constants.ComponentType.Float),
@@ -157,6 +169,14 @@ def __gather_colors(blender_primitive, export_settings):
             color_id = 'COLOR_' + str(color_index)
     return attributes
 
+def __convert_to_linear_color(internal_color):
+    col = [0.0,0.0,0.0,0.0]
+    for i in range(0,len(internal_color) - 1):    
+        if internal_color[i] < 0.0404482362771082:
+            col[i] = internal_color[i] / 12.92
+        else:
+            col[i] = math.pow(((internal_color[i] + 0.0055) / 1.05), 2.4)
+    return col
 
 def __gather_skins(blender_primitive, export_settings):
     attributes = {}

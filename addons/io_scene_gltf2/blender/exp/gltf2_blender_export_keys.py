@@ -40,6 +40,7 @@ YUP = 'gltf_yup'
 MORPH = 'gltf_morph'
 TEX_COORDS = 'gltf_texcoords'
 COLORS = 'gltf_colors'
+COLORS_FORMAT = "gltf_colors_format"
 NORMALS = 'gltf_normals'
 TANGENTS = 'gltf_tangents'
 MORPH_TANGENT = 'gltf_morph_tangent'

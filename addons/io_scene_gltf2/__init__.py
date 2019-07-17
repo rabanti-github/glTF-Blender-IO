@@ -125,6 +125,20 @@ class ExportGLTF2_Base:
         default='NAME'
     )
 
+    export_colors_format = EnumProperty(
+        name='Format',
+        items=(('SRGB', 'sRGB',
+                'Export the vertex colors in the sRGB color space'),
+                ('LINEAR', 'Linear',
+                'Export the vertex colors in a linear color space')
+        ),
+        description=(
+            'Output format for vertex colors. The float values of the colors can be exported according to sRGB, which is a non-linear gradient, '
+            'or linear. The later one can be used to treat the vertex colors as (control) data and actually not as color values'
+        ),
+        default='SRGB'
+    )
+
     export_texcoords = BoolProperty(
         name='UVs',
         description='Export UVs (texture coordinates) with meshes',
@@ -371,6 +385,7 @@ class ExportGLTF2_Base:
 
         export_settings['gltf_materials'] = self.export_materials
         export_settings['gltf_colors'] = self.export_colors
+        export_settings['gltf_colors_format'] = self.export_colors_format
         export_settings['gltf_cameras'] = self.export_cameras
         export_settings['gltf_selected'] = self.export_selected
         export_settings['gltf_layers'] = True  # self.export_layers
@@ -441,6 +456,8 @@ class ExportGLTF2_Base:
         if self.export_normals:
             col.prop(self, 'export_tangents')
         col.prop(self, 'export_colors')
+        if (self.export_colors):
+            col.prop(self, 'export_colors_format')
         col.prop(self, 'export_materials')
         if self.export_materials:
             col.prop(self, 'export_image_format')
