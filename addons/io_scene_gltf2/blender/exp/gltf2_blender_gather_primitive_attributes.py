@@ -137,46 +137,22 @@ def __gather_colors(blender_primitive, export_settings):
     attributes = {}
     if export_settings[gltf2_blender_export_keys.COLORS]:
         color_space = 0
-<<<<<<< HEAD
-=======
-        print_console('INFO', export_settings[gltf2_blender_export_keys.COLORS_FORMAT])
->>>>>>> master
         if export_settings[gltf2_blender_export_keys.COLORS_FORMAT] == 'LINEAR':
             color_space = 1
         color_index = 0
         color_id = 'COLOR_' + str(color_index)
         while blender_primitive["attributes"].get(color_id) is not None:
-<<<<<<< HEAD
-           # print_console('INFO', blender_primitive["attributes"][color_id])
-
-           # print_console('INFO', str(internal_color))
             if color_space == 0: 
                 internal_color = blender_primitive["attributes"][color_id] # SRGB = default
             else: # Linear modifier
                 internal_color = __convert_to_linear_color(blender_primitive["attributes"][color_id])
             
-=======
-            print_console('INFO', blender_primitive["attributes"][color_id])
-            """
-            if color_index == 1:
-                if color_space == 1:
-                    internal_color = blender_primitive["attributes"][color_id]
-                    if internal_color < 0.04045:
-                        internal_color = internal_color / 12.92
-                    else:
-                        internal_color = math.pow(((internal_color + 0.055)/1.055),2.4)
-                else:
-                    internal_color = blender_primitive["attributes"][color_id]
-            else:
-                internal_color = blender_primitive["attributes"][color_id] # SRGB = default
-            """
->>>>>>> master
             attributes[color_id] = gltf2_io.Accessor(
                 buffer_view=gltf2_io_binary_data.BinaryData.from_list(
                     internal_color, gltf2_io_constants.ComponentType.Float),
                 byte_offset=None,
                 component_type=gltf2_io_constants.ComponentType.Float,
-                count=len(internal_color) // gltf2_io_constants.DataType.num_elements(gltf2_io_constants.DataType.Vec4),
+                count=len(internal_color),
                 extensions=None,
                 extras=None,
                 max=None,
