@@ -134,7 +134,9 @@ class ExportGLTF2_Base:
         ),
         description=(
             'Output format for vertex colors. The float values of the colors can be exported according to sRGB, which is a non-linear gradient, '
-            'or linear. The later one can be used to treat the vertex colors as (control) data and actually not as color values'
+            'or linear. The later one can be used to treat the vertex colors as (control) data and actually not as color values. Note: '
+            'Since the values are still stored as floats, rounding errors are possible. In case of linear, exact values cannot be expected '
+            '(0.25 may be 0.24998, for instance)'
         ),
         default='SRGB'
     )

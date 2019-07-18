@@ -146,13 +146,12 @@ def __gather_colors(blender_primitive, export_settings):
                 internal_color = blender_primitive["attributes"][color_id] # SRGB = default
             else: # Linear modifier
                 internal_color = __convert_to_linear_color(blender_primitive["attributes"][color_id])
-            
             attributes[color_id] = gltf2_io.Accessor(
                 buffer_view=gltf2_io_binary_data.BinaryData.from_list(
                     internal_color, gltf2_io_constants.ComponentType.Float),
                 byte_offset=None,
                 component_type=gltf2_io_constants.ComponentType.Float,
-                count=len(internal_color),
+                count=len(internal_color) // gltf2_io_constants.DataType.num_elements(gltf2_io_constants.DataType.Vec4),
                 extensions=None,
                 extras=None,
                 max=None,
@@ -167,13 +166,14 @@ def __gather_colors(blender_primitive, export_settings):
     return attributes
 
 def __convert_to_linear_color(internal_color):
-    col = [0.0,0.0,0.0,0.0]
-    for i in range(0,len(internal_color) - 1):    
-        if internal_color[i] < 0.0404482362771082:
-            col[i] = internal_color[i] / 12.92
+    linear_color = []
+    pow_const = 1.0 / 2.4
+    for  color in internal_color:
+        if color > 0.0031308:
+            linear_color.append(1.055 * math.pow(color, pow_const) - 0.055)    
         else:
-            col[i] = math.pow(((internal_color[i] + 0.0055) / 1.05), 2.4)
-    return col
+            linear_color.append(color * 12.92)
+    return linear_color
 
 def __gather_skins(blender_primitive, export_settings):
     attributes = {}
