@@ -136,14 +136,11 @@ def __gather_texcoord(blender_primitive, export_settings):
 def __gather_colors(blender_primitive, export_settings):
     attributes = {}
     if export_settings[gltf2_blender_export_keys.COLORS]:
-        color_space = 0
-        if export_settings[gltf2_blender_export_keys.COLORS_FORMAT] == 'LINEAR':
-            color_space = 1
         color_index = 0
         color_id = 'COLOR_' + str(color_index)
         while blender_primitive["attributes"].get(color_id) is not None:
-            if color_space == 0: 
-                internal_color = blender_primitive["attributes"][color_id] # SRGB = default
+            if export_settings[gltf2_blender_export_keys.COLORS_FORMAT] == 'SRGB':
+                internal_color = blender_primitive["attributes"][color_id]
             else: # Linear modifier
                 internal_color = __convert_to_linear_color(blender_primitive["attributes"][color_id])
             attributes[color_id] = gltf2_io.Accessor(

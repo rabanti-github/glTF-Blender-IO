@@ -125,7 +125,7 @@ class ExportGLTF2_Base:
         default='NAME'
     )
 
-    export_colors_format = EnumProperty(
+    export_colors_format: EnumProperty(
         name='Format',
         items=(('SRGB', 'sRGB',
                 'Export the vertex colors in the sRGB color space'),
